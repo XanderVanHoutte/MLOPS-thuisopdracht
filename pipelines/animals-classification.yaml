@@ -10,49 +10,46 @@ inputs:
   epochs: 5
 
 outputs:
-  model:
-    type: uri_folder
+  pipeline_job_trained_model:
+    mode: upload
+  pipeline_job_scored_data:
+    mode: upload
+  pipeline_job_evaluation_report:
+    mode: upload
 
 settings:
-  # default_compute: serverless
   default_compute: azureml:xander-vh-compute
 
 jobs:
   data_prep_pandas:
     type: command
-    # component: azureml:dataprep:0.1.0
     component: ../components/dataprep/dataprep.yaml
     inputs:
       data:
         type: uri_folder
         path: azureml:pandas:1
-
     outputs:
       output_data:
         mode: rw_mount
 
-  data_prep_cats:
+  data_prep_grizzlies:
     type: command
-    # component: azureml:dataprep:0.1.0
     component: ../components/dataprep/dataprep.yaml
     inputs:
       data:
         type: uri_folder
         path: azureml:grizzlies:1
-
     outputs:
       output_data:
         mode: rw_mount
 
-  data_prep_dogs:
+  data_prep_black_bears:
     type: command
-    # component: azureml:dataprep:0.1.0
     component: ../components/dataprep/dataprep.yaml
     inputs:
       data:
         type: uri_folder
         path: azureml:black-bears:1
-
     outputs:
       output_data:
         mode: rw_mount
@@ -63,7 +60,7 @@ jobs:
     inputs:
       animal_1: ${{parent.jobs.data_prep_pandas.outputs.output_data}}
       animal_2: ${{parent.jobs.data_prep_grizzlies.outputs.output_data}}
-      animal_3: ${{parent.jobs.data_prep_black-bears.outputs.output_data}}
+      animal_3: ${{parent.jobs.data_prep_black_bears.outputs.output_data}}
       train_test_split_factor: ${{parent.inputs.train_test_split_factor}}
     outputs:
       testing_data:
@@ -79,8 +76,7 @@ jobs:
       testing_folder: ${{parent.jobs.data_split.outputs.testing_data}}
       epochs: ${{parent.inputs.epochs}}
     outputs:
-      output_folder:
-        mode: rw_mount
+      output_folder: ${{parent.outputs.pipeline_job_trained_model}}
 
   register:
     type: command
@@ -90,4 +86,4 @@ jobs:
       model_type: custom_model
       model_path: ${{parent.jobs.training.outputs.output_folder}}
     outputs:
-      registration_details_folder: ${{ parent.outputs.model }}
+      registration_details_folder: ${{parent.outputs.pipeline_job_evaluation_report}}
