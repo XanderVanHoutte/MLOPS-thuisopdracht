@@ -27,7 +27,7 @@ jobs:
       - name: Azure -- Create Compute
         uses: Azure/CLI@v2.0.0
         with:
-          azcliversion: 2.53.0
+          azcliversion: 2.54.0
           inlineScript: |
             az extension add --name ml
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
@@ -37,7 +37,7 @@ jobs:
       - name: Azure -- Start Compute
         uses: Azure/CLI@v2.0.0
         with:
-          azcliversion: 2.53.0
+          azcliversion: 2.54.0
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
@@ -48,7 +48,7 @@ jobs:
       - name: Azure test - Get Compute
         uses: Azure/CLI@v2.0.0
         with:
-          azcliversion: 2.53.0
+          azcliversion: 2.54.0
           inlineScript: |
             az extension add --name ml
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
@@ -58,7 +58,7 @@ jobs:
       - name: Azure -- Environment Setup
         uses: Azure/CLI@v2.0.0
         with:
-          azcliversion: 2.53.0
+          azcliversion: 2.54.0
           inlineScript: |
             az extension add --name ml
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
@@ -69,7 +69,7 @@ jobs:
       - name: Azure -- Component Setup
         uses: Azure/CLI@v2.0.0
         with:
-          azcliversion: 2.53.0
+          azcliversion: 2.54.0
           inlineScript: |
             az extension add --name ml
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
@@ -81,7 +81,7 @@ jobs:
       - name: Azure -- Start Training Job
         uses: Azure/CLI@v2.0.0
         with:
-          azcliversion: 2.53.0
+          azcliversion: 2.54.0
           inlineScript: |
             az extension add --name ml
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
@@ -91,7 +91,7 @@ jobs:
       - name: Azure -- Stop Compute
         uses: Azure/CLI@v2.0.0
         with:
-          azcliversion: 2.53.0
+          azcliversion: 2.54.0
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
