@@ -5,7 +5,7 @@ on:
 
 env:
   GROUP: mlops-demo # Set your Azure resource group name
-  WORKSPACE: xandervh-ml # Set your Azure ML workspace name
+  WORKSPACE: xvh # Set your Azure ML workspace name
   LOCATION: westeurope # Set the Azure region, e.g., westeurope
 
 jobs:

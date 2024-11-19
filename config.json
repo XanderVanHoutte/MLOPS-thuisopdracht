@@ -1,5 +1,0 @@
-from azureml.core import Workspace
-
-ws = Workspace.get(name="your-workspace-name", 
-                   subscription_id="your-subscription-id", 
-                   resource_group="your-resource-group")
