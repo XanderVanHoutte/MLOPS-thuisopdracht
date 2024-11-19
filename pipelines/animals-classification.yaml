@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 
 type: pipeline
-name: animals-classification-cli
+name: animals-classification-cli-v1
 display_name: Animals Classification
 experiment_name: classification
 
@@ -19,6 +19,8 @@ outputs:
 
 settings:
   default_compute: azureml:xander-vh-compute
+  identity:
+    type: user_identity
 
 jobs:
   data_prep_pandas:
@@ -49,7 +51,7 @@ jobs:
     inputs:
       data:
         type: uri_folder
-        path: azureml:black-bears:1
+        path: azureml:black_bears:1
     outputs:
       output_data:
         mode: rw_mount
