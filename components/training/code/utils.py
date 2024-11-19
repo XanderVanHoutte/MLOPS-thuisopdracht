@@ -8,26 +8,16 @@ from tensorflow.keras.utils import to_categorical
 from typing import List
 
 def getTargets(filepaths: List[str]) -> List[str]:
-    labels = [fp.split('/')[-1].split('_')[0] for fp in filepaths] # Get only the animal name
-
+    labels = [fp.split('/')[-1].rstrip('0123456789.jpg') for fp in filepaths] # Get only the animal name
     return labels
 
 def encodeLabels(y_train: List, y_test: List):
     label_encoder = LabelEncoder()
     y_train_labels = label_encoder.fit_transform(y_train)
-    
-    # Handle unseen labels in the test set
-    y_test_labels = []
-    for label in y_test:
-        if label in label_encoder.classes_:
-            y_test_labels.append(label_encoder.transform([label])[0])
-        else:
-            # Assign a default value for unseen labels, e.g., -1
-            y_test_labels.append(-1)
-    y_test_labels = np.array(y_test_labels)
+    y_test_labels = label_encoder.transform(y_test)
 
     y_train_1h = to_categorical(y_train_labels)
-    y_test_1h = to_categorical(y_test_labels, num_classes=len(label_encoder.classes_))
+    y_test_1h = to_categorical(y_test_labels)
 
     LABELS = label_encoder.classes_
     print(f"{LABELS} -- {label_encoder.transform(LABELS)}")
