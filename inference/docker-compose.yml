@@ -1,0 +1,21 @@
+# version: "3"
+# services:
+#   api-1:
+#     ports:
+#       - 8000:8000
+#     # build:
+#     #   context: .
+#     #   platforms:
+#     #     - linux/arm64
+#     image: nathansegers/mlops-animals-api:0.1.0
+
+#   # frontend:
+#   #   build: ./web
+version: "3"
+services:
+  api-1:
+    build:
+      context: .
+      dockerfile: dockerfile.txt
+    ports:
+      - 8000:8000

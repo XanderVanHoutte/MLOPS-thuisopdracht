@@ -1,0 +1,99 @@
+name: Azure ML Job Pipeline
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+env:
+  GROUP: mlops-demo # Set your Azure resource group name
+  WORKSPACE: xandervh-ml # Set your Azure ML workspace name
+  LOCATION: westeurope # Set the Azure region, e.g., westeurope
+
+jobs:
+  azure-pipeline:
+    runs-on: ubuntu-22.04 # Specify the Ubuntu version to run on
+
+    steps:
+      # Step to check out the code repository
+      - name: Check out code repository
+        uses: actions/checkout@v4
+
+      # Step to log in to Azure
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} # Ensure your Azure credentials are stored in GitHub Secrets
+
+      # Step to create the compute machine
+      - name: Azure -- Create Compute
+        uses: Azure/CLI@v2.0.0
+        with:
+          azcliversion: 2.53.0
+          inlineScript: |
+            az extension add --name ml
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml compute create --file ./environment/compute.yaml
+
+      # Step to start the compute machine
+      - name: Azure -- Start Compute
+        uses: Azure/CLI@v2.0.0
+        with:
+          azcliversion: 2.53.0
+          inlineScript: |
+            az extension add --name ml -y
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml compute start --name cli-created-machine
+        continue-on-error: true # Ignore errors if the machine is already started
+
+      # Step to get existing compute resources (optional)
+      - name: Azure test - Get Compute
+        uses: Azure/CLI@v2.0.0
+        with:
+          azcliversion: 2.53.0
+          inlineScript: |
+            az extension add --name ml
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml compute list
+
+      # Step to create environments
+      - name: Azure -- Environment Setup
+        uses: Azure/CLI@v2.0.0
+        with:
+          azcliversion: 2.53.0
+          inlineScript: |
+            az extension add --name ml
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml environment create --file ./environment/pillow.yaml
+            az ml environment create --file ./environment/tensorflow.yaml
+
+      # Step to create components
+      - name: Azure -- Component Setup
+        uses: Azure/CLI@v2.0.0
+        with:
+          azcliversion: 2.53.0
+          inlineScript: |
+            az extension add --name ml
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml component create --file ./components/dataprep/dataprep.yaml
+            az ml component create --file ./components/dataprep/data_split.yaml
+            az ml component create --file ./components/training/training.yaml
+
+      # Step to start the training job
+      - name: Azure -- Start Training Job
+        uses: Azure/CLI@v2.0.0
+        with:
+          azcliversion: 2.53.0
+          inlineScript: |
+            az extension add --name ml
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml job create --file ./pipelines/animals-classification.yaml --stream --set name=animals-classification-${{ github.sha }}-${{ github.run_id }}
+
+      # Step to stop the compute machine
+      - name: Azure -- Stop Compute
+        uses: Azure/CLI@v2.0.0
+        with:
+          azcliversion: 2.53.0
+          inlineScript: |
+            az extension add --name ml -y
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml compute stop --name cli-created-machine
+        continue-on-error: true # Ignore errors if the machine is already stopped
