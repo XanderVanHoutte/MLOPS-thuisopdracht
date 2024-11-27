@@ -28,6 +28,9 @@ jobs:
 
       # Fetch the name of the compute machine here, or update it through settings if set up.
 
+      - name: Install updated azure-core
+        run: pip install -U azure-core
+
       - name: Azure -- Create Compute
         uses: Azure/CLI@v2.0.0
         with:
