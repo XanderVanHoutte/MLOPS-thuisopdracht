@@ -15,7 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-ANIMALS = ['Cat', 'Dog', 'Panda'] # Animal names here
+ANIMALS = ['Panda', 'Brown bear', 'Black bear'] # Animal names here
 
 # It would've been better to use an environment variable to fix this line actually...
 model_path = "animal-cnn"
