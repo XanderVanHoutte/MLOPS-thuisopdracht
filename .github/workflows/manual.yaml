@@ -70,9 +70,9 @@ jobs:
           inlineScript: |
             az extension add --name ml
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
-            az ml components create --file ./components/dataprep/dataprep.yaml
-            az ml components create --file ./components/dataprep/data_split.yaml
-            az ml components create --file ./components/training/training.yaml
+            az ml component create --file ./components/dataprep/dataprep.yaml
+            az ml component create --file ./components/dataprep/data_split.yaml
+            az ml component create --file ./components/training/training.yaml
 
         # Todo: Only execute if needed
       - name: Azure -- Pipeline Run
