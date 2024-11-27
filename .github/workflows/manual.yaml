@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  GROUP: mlops-thuisopdracht
-  WORKSPACE: mlops-xandervh
+  GROUP: mlops-demo
+  WORKSPACE: mlops-ml-xvh
   LOCATION: westeurope
 
 permissions:
