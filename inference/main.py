@@ -15,14 +15,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-ANIMALS = ['Panda', 'Brown bear', 'Black bear'] # Animal names here
+ANIMALS = ['Panda', 'Brown Bear', 'Black Bear'] # Animal names here
 
 # It would've been better to use an environment variable to fix this line actually...
-model_path = "animal-cnn"
+model_path = os.path.join("animal-classification", "INPUT_model_path", "animal-cnn")
 layer = keras.layers.TFSMLayer(model_path, call_endpoint='serving_default', name='animal-cnn')
 input_layer = tf.keras.Input(shape = (64, 64, 3))
 outputs = layer(input_layer)
 model = tf.keras.Model(input_layer, outputs)
+
+@app.post('/upload/image')
+async def uploadImage(img: UploadFile = File(...)):
+    original_image = Image.open(img.file)
+    resized_image = original_image.resize((64, 64))
+    images_to_predict = np.expand_dims(np.array(resized_image), axis=0)
+    predictions = model.predict(images_to_predict) #[0 1 0]
+    prediction_probabilities = predictions['activation_7']
+    classifications = prediction_probabilities.argmax(axis=1) # [1]
+
+    return ANIMALS[classifications.tolist()[0]] # "Dog"
 
 @app.post('/upload/image')
 async def uploadImage(img: UploadFile = File(...)):
