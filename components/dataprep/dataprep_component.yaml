@@ -1,0 +1,35 @@
+$schema: https://azuremlschemas.azureedge.net/schemas/2021-10-01/commandJob.json
+name: dataprep_component
+version: 1
+type: command
+display_name: Data Preprocessing Component
+description: This component processes the input dataset, generates visualizations, and splits data into features and labels.
+environment: azureml:aml-DataVis:1
+inputs:
+  data:
+    type: uri_file
+    description: The CSV file containing music genre data.
+outputs:
+  training_features_output:
+    type: uri_folder
+  testing_features_output:
+    type: uri_folder
+  validation_features_output:
+    type: uri_folder
+  training_labels_output:
+    type: uri_folder
+  testing_labels_output:
+    type: uri_folder
+  validation_labels_output:
+    type: uri_folder
+code: ./code
+command: |
+  python dataprep.py \
+  --data ${{inputs.data}} \
+  --output_logs ${{outputs.training_features_output}} \
+  --training_features ${{outputs.training_features_output}} \
+  --testing_features ${{outputs.testing_features_output}} \
+  --validation_features ${{outputs.validation_features_output}} \
+  --training_labels ${{outputs.training_labels_output}} \
+  --testing_labels ${{outputs.testing_labels_output}} \
+  --validation_labels ${{outputs.validation_labels_output}}

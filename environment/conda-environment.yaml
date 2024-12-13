@@ -1,0 +1,15 @@
+# environment/environment.yaml
+
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - pip
+  - scikit-learn
+  - pandas
+  - seaborn
+  - pip:
+    - azureml-mlflow==1.42.0
+    - matplotlib
+name: aml-DataVis

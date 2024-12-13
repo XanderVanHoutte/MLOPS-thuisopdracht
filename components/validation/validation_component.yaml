@@ -1,0 +1,28 @@
+$schema: https://azuremlschemas.azureedge.net/schemas/2021-10-01/commandJob.json
+name: validation_component
+version: 1
+type: command
+display_name: Testing / Validation
+description: This component validates the trained model using the testing dataset.
+environment: azureml:aml-DataVis:1
+inputs:
+  testing_features:
+    type: uri_folder
+    description: Folder containing testing features.
+  testing_labels:
+    type: uri_folder
+    description: Folder containing testing labels.
+  model:
+    type: uri_file
+    description: Path to the trained model.
+outputs:
+  output_logs:
+    type: uri_folder
+    description: Folder to save validation logs and plots.
+code: .
+command: |
+  python validate.py \
+  --output_logs ${{outputs.output_logs}} \
+  --model ${{inputs.model}} \
+  --testing_features ${{inputs.testing_features}} \
+  --testing_labels ${{inputs.testing_labels}}

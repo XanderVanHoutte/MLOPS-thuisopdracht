@@ -1,0 +1,62 @@
+$schema: https://azuremlschemas.azureedge.net/schemas/2021-10-01/commandJob.json
+name: music_genre_dataprep_pipeline2
+type: pipeline
+display_name: Music Genre Data Preparation Pipeline
+description: Pipeline to preprocess music genre data and generate visualizations and features/labels.
+
+jobs:
+  dataprep_job:
+    type: command
+    component: azureml:dataprep_component:1
+    compute: azureml:compute-xvh
+    inputs:
+      data: azureml://subscriptions/952f47f9-2a31-4cd9-9364-bc87cb15e8ba/resourcegroups/mlops-demo/workspaces/ml-xvh/datastores/workspaceblobstore/paths/LocalUpload/ba89476d9941547c249657f24213d990/music_genre.csv #telkens verkeerde aanpak voor hoe ik aan mijn csv moet geraken en dan liep ik tegen error's van uri file etc
+    outputs:
+      training_features_output: 
+        type: uri_folder
+        mode: upload
+      testing_features_output: 
+        type: uri_folder
+        mode: upload
+      validation_features_output: 
+        type: uri_folder
+        mode: upload
+      training_labels_output: 
+        type: uri_folder
+        mode: upload
+      testing_labels_output: 
+        type: uri_folder
+        mode: upload
+      validation_labels_output: 
+        type: uri_folder
+        mode: upload
+
+  training_job:
+    type: command
+    component: azureml:training_component:1
+    compute: azureml:compute-xvh
+    inputs:
+      training_features: ${{ jobs.dataprep_job.outputs.training_features_output }}
+      training_labels: ${{ jobs.dataprep_job.outputs.training_labels_output }}
+      validation_features: ${{ jobs.dataprep_job.outputs.validation_features_output }}
+      validation_labels: ${{ jobs.dataprep_job.outputs.validation_labels_output }}
+      n_estimators: 35
+      max_depth: 15
+      min_samples_leaf: 4
+    outputs:
+      output_model:
+        type: uri_file
+        mode: upload
+
+  validation_job:
+    type: command
+    component: azureml:validation_component:1
+    compute: azureml:compute-xvh
+    inputs:
+      testing_features: ${{ jobs.dataprep_job.outputs.testing_features_output }}
+      testing_labels: ${{ jobs.dataprep_job.outputs.testing_labels_output }}
+      model: ${{ jobs.training_job.outputs.output_model }}
+    outputs:
+      output_logs:
+        type: uri_folder
+        mode: upload

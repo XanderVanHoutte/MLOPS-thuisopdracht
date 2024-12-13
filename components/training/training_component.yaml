@@ -1,0 +1,44 @@
+$schema: https://azuremlschemas.azureedge.net/schemas/2021-10-01/commandJob.json
+name: training_component
+version: 1
+type: command
+display_name: Model Training Component
+description: This component trains a model using the preprocessed features and labels.
+environment: azureml:aml-DataVis:1
+inputs:
+  training_features:
+    type: uri_folder
+    description: Folder containing training features.
+  training_labels:
+    type: uri_folder
+    description: Folder containing training labels.
+  validation_features:
+    type: uri_folder
+    description: Folder containing validation features.
+  validation_labels:
+    type: uri_folder
+    description: Folder containing validation labels.
+  n_estimators:
+    type: integer
+    description: Number of estimators in the random forest.
+  max_depth:
+    type: integer
+    description: Maximum depth of the trees.
+  min_samples_leaf:
+    type: integer
+    description: Minimum number of samples per leaf.
+outputs:
+  output_model:
+    type: uri_file
+    description: Path to the saved model
+code: ./code
+command: |
+  python train.py \
+  --training_features ${{inputs.training_features}} \
+  --training_labels ${{inputs.training_labels}} \
+  --validation_features ${{inputs.validation_features}} \
+  --validation_labels ${{inputs.validation_labels}} \
+  --output_model ${{outputs.output_model}} \
+  --n_estimators ${{inputs.n_estimators}} \
+  --max_depth ${{inputs.max_depth}} \
+  --min_samples_leaf ${{inputs.min_samples_leaf}}
